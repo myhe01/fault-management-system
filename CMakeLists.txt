@@ -15,6 +15,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Sources
 add_executable(fms
     src/main.cpp
+    src/EmulatedInterface.cpp
     src/FaultManager.cpp
 )
 
