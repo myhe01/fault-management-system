@@ -12,12 +12,12 @@ FaultTableEntry::FaultTableEntry(
     Status faultStatus,
     std::string faultGroup,
     std::string uid
-) : faultStatus_(faultStatus), faultGroup_(faultGroup), uid_("")
+) : faultStatus_(faultStatus), faultGroup_(faultGroup), uid_(uid)
 {
     if (uid_.empty())
     {
         // Generate a random UID if a name or UID wasn't assigned
-        Uid::generateUid();
+        uid_ = Uid::generateUid();
     }
 }
 

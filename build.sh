@@ -1,7 +1,14 @@
 #!/bin/bash
 
-if [[ "$1" == "--no-cache" ]]; then
-    docker build --no-cache -t fms .
-else
-    docker build -t fms .
-fi
+NO_CACHE=""
+TARGET="fms"
+DOCKERFILE="Dockerfile"
+
+for arg in "$@"; do
+    case "$arg" in
+        --clean) NO_CACHE="--no-cache" ;;
+        --test) TARGET="fms_tests"; DOCKERFILE="Dockerfile.test" ;;
+    esac
+done
+
+docker build $NO_CACHE -t $TARGET -f $DOCKERFILE .
