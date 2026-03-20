@@ -11,11 +11,9 @@ namespace fms {
 
 enum class Status: int
 {
-    Status_Begin_,
     UNINITIALIZED = -1,
     PASS = 0,
-    FAIL = 1,
-    Status_End_
+    FAIL = 1
 };
 
 } // namespace fms

@@ -7,10 +7,9 @@
 #ifndef FMS_INCLUDE_FAULTABLE_
 #define FMS_INCLUDE_FAULTABLE_
 
+#include <array>
 #include <string>
-#include <queue>
 #include "FaultTableEntry.hpp"
-#include "FixedQueue.hpp"
 #include "Status.hpp"
 
 namespace fms {
@@ -18,20 +17,20 @@ namespace fms {
 class FaultTable
 {
 public:
-    FaultTable();
-    ~FaultTable();
+    FaultTable() = default;
+    ~FaultTable() = default;
 
-    bool addFault(FaultTableEntry faultTableEntry);
-    Status getFaultStatus(std::string uid);
-    bool setFaultStatus(Status status);
-
-    // Count number of faults by hardware component
-    unsigned int countFaults(std::string hardwareComponent);
+    bool addFault(FaultTableEntry& faultTableEntry);
+    bool removeFault(std::string uid);
+    bool getFaultStatus(std::string uid, Status& statusOut) const;
+    bool setFaultStatus(std::string uid, Status status);
+    Status getGroupStatus(std::string faultGroup) const;
 
 private:
-    static constexpr int MAX_FAULT_TABLE_ENTRIES_ = 64;
+    int getFaultIndexByUid_(std::string uid) const;
 
-    FixedQueue<FaultTableEntry, MAX_FAULT_TABLE_ENTRIES_> faultTable_;
+    static constexpr std::size_t MAX_FAULT_TABLE_ENTRIES_ = 64;
+    std::array<FaultTableEntry, MAX_FAULT_TABLE_ENTRIES_> faultTable_;
 };
 
 } // namespace fms

@@ -1,6 +1,6 @@
 /**
  * File:    FaultTableEntry.hpp
- * Purpose: Fault table header-only class declarations and definitions.
+ * Purpose: Fault table entry class declarations.
  * Creator: Brendan College
  */
 
@@ -9,51 +9,28 @@
 
 #include <string>
 #include "Status.hpp"
+#include "Uid.hpp"
 
 namespace fms {
 
 class FaultTableEntry
 {
 public:
+    FaultTableEntry() = default;
     FaultTableEntry(
-        std::string uid,
-        std::string hardwareIdentifier,
-        std::string description,
-        Status faultStatus = Status::UNINITIALIZED
-    )
-    : uid_(uid), hardwareIdentifier_(hardwareIdentifier), description_(description), faultStatus_(faultStatus)
-    {}
+        Status faultStatus,
+        std::string faultGroup = "",
+        std::string uid = ""
+    );
 
-    std::string getUid() const
-    {
-        return uid_;
-    }
-
-    std::string getHardwareIdentifier() const
-    {
-        return hardwareIdentifier_;
-    }
-
-    std::string getDescription() const
-    {
-        return description_;
-    }
-
-    Status getFaultStatus() const
-    {
-        return faultStatus_;
-    }
-
-    void setFaultStatus(Status faultStatus)
-    {
-        faultStatus_ = faultStatus;
-    }
+    Status getFaultStatus() const;
+    void setFaultStatus(Status faultStatus);
+    std::string getUid() const;
 
 private:
-    std::string uid_;
-    std::string hardwareIdentifier_;
-    std::string description_;
-    Status faultStatus_;
+    Status faultStatus_ = Status::UNINITIALIZED;
+    std::string faultGroup_ = "";
+    std::string uid_ = "";
 };
 
 } // namespace fms

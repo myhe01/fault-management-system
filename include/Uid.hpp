@@ -1,6 +1,6 @@
 /**
  * File:    Uid.hpp
- * Purpose: UID static class.
+ * Purpose: UID header-only static class.
  * Creator: Brendan College
  */
 

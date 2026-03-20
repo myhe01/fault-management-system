@@ -5,8 +5,10 @@
  */
 
 #include <csignal>
+#include <chrono>
 #include <iostream>
-#include "FaultManager.hpp"
+#include <thread>
+#include "FaultTable.hpp"
 
 static bool gThreadRun = true;
 
@@ -20,7 +22,7 @@ int main(int argc, char* argv[])
     std::signal(SIGINT, signalHandler);
     std::signal(SIGTERM, signalHandler);
 
-    fms::FaultManager faultManager;
+    fms::FaultTable faultTable_;
 
     while (gThreadRun)
     {
