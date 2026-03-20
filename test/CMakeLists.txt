@@ -25,6 +25,7 @@ enable_testing()
 add_executable(fms_tests
     test/FaultTableTest.cpp
     test/FaultTableEntryTest.cpp
+    test/UidTest.cpp
     src/FaultTable.cpp
     src/FaultTableEntry.cpp
 )
@@ -34,8 +35,13 @@ target_include_directories(fms_tests PRIVATE
 )
 
 target_compile_options(fms_tests PRIVATE
-    -Wall -Wextra -Wpedantic -Wshadow -Wconversion
-    -Wno-unused-parameter -Werror
+    -Wall
+    -Wextra
+    -Wpedantic
+    -Wshadow
+    -Wconversion
+    -Wno-unused-parameter
+    -Werror
 )
 
 target_link_libraries(fms_tests PRIVATE

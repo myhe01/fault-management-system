@@ -6,7 +6,7 @@ DOCKERFILE="Dockerfile"
 
 for arg in "$@"; do
     case "$arg" in
-        --clean) NO_CACHE="--no-cache" ;;
+        --no-cache) NO_CACHE="--no-cache" ;;
         --test) TARGET="fms_tests"; DOCKERFILE="Dockerfile.test" ;;
     esac
 done

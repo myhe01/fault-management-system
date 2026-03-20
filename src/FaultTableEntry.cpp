@@ -17,7 +17,7 @@ FaultTableEntry::FaultTableEntry(
     if (uid_.empty())
     {
         // Generate a random UID if a name or UID wasn't assigned
-        uid_ = Uid::generateUid();
+        uid_ = Uid::generate();
     }
 }
 

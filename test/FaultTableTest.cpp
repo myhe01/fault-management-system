@@ -6,24 +6,47 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+
+#define private public
 #include "FaultTable.hpp"
+#undef private
 
 namespace fms {
 
-TEST(FaultTableTest, AddFault)
+TEST(FaultTableTest, Initialization)
 {
     FaultTable table;
-    FaultTableEntry entry(Status::PASS, "group_a");
+    bool allFaultStatusUninit = true;
+    bool allFaultGroupEmpty = true;
+    bool allUidEmpty = true;
 
-    EXPECT_TRUE(table.addFault(entry));
+    for (FaultTableEntry& entry: table.faultTable_)
+    {
+        if (entry.faultStatus_ != Status::UNINITIALIZED)
+        {
+            allFaultStatusUninit = false;
+        }
+        if (entry.faultGroup_ != "")
+        {
+            allFaultGroupEmpty = false;
+        }
+        if (entry.uid_ != "")
+        {
+            allUidEmpty = false;
+        }
+    }
+
+    EXPECT_TRUE(allFaultStatusUninit);
+    EXPECT_TRUE(allFaultGroupEmpty);
+    EXPECT_TRUE(allUidEmpty);
 }
 
-TEST(FaultTableTest, RemoveFault)
+TEST(FaultTableTest, AddRemoveFault)
 {
     FaultTable table;
-    FaultTableEntry entry(Status::PASS, "group_a");
-    table.addFault(entry);
+    FaultTableEntry entry(Status::PASS);
 
+    EXPECT_TRUE(table.addFault(entry));
     EXPECT_TRUE(table.removeFault(entry.getUid()));
     EXPECT_FALSE(table.removeFault(entry.getUid()));
 }

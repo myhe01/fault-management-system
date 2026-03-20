@@ -40,7 +40,7 @@ bool FaultTable::addFault(Status faultStatus, const std::string& faultGroup, con
             FaultTableEntry newEntry(
                 faultStatus,
                 faultGroup,
-                (uid.empty() ? Uid::generateUid() : uid)
+                (uid.empty() ? Uid::generate() : uid)
             );
             entry = newEntry;
 

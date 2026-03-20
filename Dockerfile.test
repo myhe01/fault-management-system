@@ -13,8 +13,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /src
 
-# Copy project files
+# Pre-fetch GoogleTest before copying sources so this layer gets cached
 COPY test/CMakeLists.txt CMakeLists.txt
+RUN cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release --no-warn-unused-cli \
+    && cmake --build build --target googletest_fetch || true
+
+# Copy project files
 COPY include/ include/
 COPY src/ src/
 COPY test/ test/

@@ -17,7 +17,7 @@ namespace fms {
 class Uid
 {
 public:
-    static std::string generateUid(const std::string& seed = "")
+    static std::string generate(const std::string& seed = "")
     {
         // Use the seed if passed, else just use RNG
         std::mt19937 gen(seed.empty() ? std::random_device{}() : std::hash<std::string>{}(seed));
