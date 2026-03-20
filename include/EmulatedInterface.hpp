@@ -26,12 +26,12 @@ public:
     std::string getIdentifier() const;
 
     // Disable copying
-    EmulatedInterface(const EmulatedInterface&)            = delete;
+    EmulatedInterface(const EmulatedInterface&) = delete;
     EmulatedInterface& operator=(const EmulatedInterface&) = delete;
 
     // Disable moving
-    EmulatedInterface(EmulatedInterface&&)                 = delete;
-    EmulatedInterface& operator=(EmulatedInterface&&)      = delete;
+    EmulatedInterface(EmulatedInterface&&) = delete;
+    EmulatedInterface& operator=(EmulatedInterface&&) = delete;
 private:
     void run_();
 
