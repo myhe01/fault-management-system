@@ -31,7 +31,17 @@ void FaultTableEntry::setFaultStatus(Status faultStatus)
     faultStatus_ = faultStatus;
 }
 
-std::string FaultTableEntry::getUid() const
+const std::string& FaultTableEntry::getFaultGroup() const
+{
+    return faultGroup_;
+}
+
+void FaultTableEntry::setFaultGroup(const std::string& faultGroup)
+{
+    faultGroup_ = faultGroup;
+}
+
+const std::string& FaultTableEntry::getUid() const
 {
     return uid_;
 }

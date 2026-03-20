@@ -20,15 +20,15 @@ public:
     FaultTable() = default;
     ~FaultTable() = default;
 
-    bool addFault(FaultTableEntry& faultTableEntry);
-    bool removeFault(std::string uid);
-    bool getFaultStatus(std::string uid, Status& statusOut) const;
-    bool setFaultStatus(std::string uid, Status status);
-    Status getGroupStatus(std::string faultGroup) const;
+    bool addFault(const FaultTableEntry& faultTableEntry);
+    bool addFault(Status faultStatus, const std::string& faultGroup = "", const std::string uid = "");
+    bool removeFault(const std::string& uid);
+    bool getFaultStatus(const std::string& uid, Status& statusOut) const;
+    bool setFaultStatus(const std::string& uid, const Status status);
+    bool setFaultGroup(const std::string& uid, const std::string& faultGroup);
+    Status getGroupStatus(const std::string& faultGroup) const;
 
 private:
-    int getFaultIndexByUid_(std::string uid) const;
-
     static constexpr std::size_t MAX_FAULT_TABLE_ENTRIES_ = 64;
     std::array<FaultTableEntry, MAX_FAULT_TABLE_ENTRIES_> faultTable_;
 };

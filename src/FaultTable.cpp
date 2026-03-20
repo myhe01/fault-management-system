@@ -10,7 +10,7 @@
 
 namespace fms {
 
-bool FaultTable::addFault(FaultTableEntry& faultTableEntry)
+bool FaultTable::addFault(const FaultTableEntry& faultTableEntry)
 {
     // Find first empty spot in the fault table
     for (FaultTableEntry& entry : faultTable_)
@@ -29,71 +29,112 @@ bool FaultTable::addFault(FaultTableEntry& faultTableEntry)
     return false;
 }
 
-bool FaultTable::removeFault(std::string uid)
+bool FaultTable::addFault(Status faultStatus, const std::string& faultGroup, const std::string uid)
 {
-    // Find matching fault's index
-    int index = getFaultIndexByUid_(uid);
-
-    if (index < 0)
+    // Find first empty spot in the fault table
+    for (FaultTableEntry& entry : faultTable_)
     {
-        // No matching fault found
-        return false;
-    }
-
-    // Found a matching entry, assign it to an empty FaultTableEntry
-    faultTable_[index] = FaultTableEntry();
-
-    // Successful removal
-    return true;
-}
-
-bool FaultTable::getFaultStatus(std::string uid, Status& statusOut) const
-{
-    // Find matching fault's index
-    int index = getFaultIndexByUid_(uid);
-
-    if (index < 0)
-    {
-        // No matching fault found
-        return false;
-    }
-
-    // Found a matching entry
-    statusOut = faultTable_[index].getFaultStatus();
-    return true;
-}
-
-bool FaultTable::setFaultStatus(std::string uid, Status status)
-{
-    // Find matching fault's index
-    int index = getFaultIndexByUid_(uid);
-
-    if (index < 0)
-    {
-        // No matching fault found
-        return false;
-    }
-
-    // Found a matching entry
-    faultTable_[index].setFaultStatus(status);
-    return true;
-}
-
-// Returns -1 when no match found, and between 0 and (MAX_FAULT_TABLE_ENTRIES_ - 1) if match found
-int FaultTable::getFaultIndexByUid_(std::string uid) const
-{
-    // Find first matching fault in the fault table
-    for (std::size_t i = 0; i < MAX_FAULT_TABLE_ENTRIES_; i++)
-    {
-        if (faultTable_[i].getUid() == uid)
+        if (entry.getFaultStatus() == Status::UNINITIALIZED)
         {
-            // We found a matching entry, return its index
-            return static_cast<int>(i);
+            // Found an empty entry, make a new FaultTableEntry and assign it
+            FaultTableEntry newEntry(
+                faultStatus,
+                faultGroup,
+                (uid.empty() ? Uid::generateUid() : uid)
+            );
+            entry = newEntry;
+
+            // Successful entry
+            return true;
         }
     }
 
-    // No matching fault found, return negative
-    return -1;
+    // No empty spots found
+    return false;
+}
+
+bool FaultTable::removeFault(const std::string& uid)
+{
+    // Find the matching fault
+    for (FaultTableEntry& entry : faultTable_)
+    {
+        if (entry.getUid() == uid)
+        {
+            // Found the fault, assign an empty FaultTableEntry (successful removal)
+            entry = FaultTableEntry();
+            return true;
+        }
+    }
+
+    // No faults matched
+    return false;
+}
+
+bool FaultTable::getFaultStatus(const std::string& uid, Status& statusOut) const
+{
+    // Find the matching fault
+    for (const FaultTableEntry& entry : faultTable_)
+    {
+        if (entry.getUid() == uid)
+        {
+            // Found a matching entry, get the status and return successfully
+            statusOut = entry.getFaultStatus();
+            return true;
+        }
+    }
+
+    // No faults matched
+    return false;
+}
+
+bool FaultTable::setFaultStatus(const std::string& uid, const Status status)
+{
+    // Find the matching fault
+    for (FaultTableEntry& entry : faultTable_)
+    {
+        if (entry.getUid() == uid)
+        {
+            // Matching fault found, set the status and return successfully
+            entry.setFaultStatus(status);
+            return true;
+        }
+    }
+
+    // No faults matched
+    return false;
+}
+
+bool FaultTable::setFaultGroup(const std::string& uid, const std::string& faultGroup)
+{
+    // Find the matching fault
+    for (FaultTableEntry& entry : faultTable_)
+    {
+        if (entry.getUid() == uid)
+        {
+            // Matching fault found, set the faultGroup and return successfully
+            entry.setFaultGroup(faultGroup);
+            return true;
+        }
+    }
+
+    // No faults matched
+    return false;
+}
+
+Status FaultTable::getGroupStatus(const std::string& faultGroup) const
+{
+    // Iterate through fault table to find faults apart of group
+    for (const FaultTableEntry& entry : faultTable_)
+    {
+        if (entry.getFaultGroup() == faultGroup && entry.getFaultStatus() != Status::PASS)
+        {
+            // Found a fault in the group that is failing
+            return Status::FAIL;
+        }
+    }
+
+    // Iterated through group and all faults are passing
+    return Status::PASS;
 }
 
 } // namespace fms

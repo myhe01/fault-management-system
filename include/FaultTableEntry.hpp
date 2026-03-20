@@ -25,7 +25,9 @@ public:
 
     Status getFaultStatus() const;
     void setFaultStatus(Status faultStatus);
-    std::string getUid() const;
+    const std::string& getFaultGroup() const;
+    void setFaultGroup(const std::string& faultGroup);
+    const std::string& getUid() const;
 
 private:
     Status faultStatus_ = Status::UNINITIALIZED;
