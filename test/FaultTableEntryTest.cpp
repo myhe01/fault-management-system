@@ -57,7 +57,12 @@ TEST(FaultTableEntryTest, AssignFaultGroupInFaultGroup)
 
     EXPECT_TRUE(entry.faultGroups_.empty());
 
-    entry.assignFaultGroup(1);
+    EXPECT_TRUE(entry.assignFaultGroup(1));
+    EXPECT_TRUE(entry.inFaultGroup(1));
+    EXPECT_EQ(entry.faultGroups_.size(), 1);
+    EXPECT_STRNE(entry.getUid().c_str(), "");
+
+    EXPECT_FALSE(entry.assignFaultGroup(1));
     EXPECT_TRUE(entry.inFaultGroup(1));
     EXPECT_EQ(entry.faultGroups_.size(), 1);
     EXPECT_STRNE(entry.getUid().c_str(), "");

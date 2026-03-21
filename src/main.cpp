@@ -10,8 +10,14 @@
 #include <thread>
 #include "FaultTable.hpp"
 
-static bool gThreadRun = true;
+static bool gThreadRun = true;      // GLOBAL Thread run flag. Set to false to trigger a clean shutdown.
 
+/**
+ * @brief Signal handler for SIGINT and SIGTERM.
+ *
+ * Sets the global run flag to false, causing the main loop to exit on its next iteration. The FaultTable is then
+ * destroyed cleanly as it goes out of scope.
+ */
 void signalHandler(int)
 {
     gThreadRun = false;
@@ -19,6 +25,7 @@ void signalHandler(int)
 
 int main()
 {
+    // Register signals
     std::signal(SIGINT, signalHandler);
     std::signal(SIGTERM, signalHandler);
 
@@ -26,7 +33,7 @@ int main()
 
     while (gThreadRun)
     {
-        // Wait for interrupt
+        // Wait for signal
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }

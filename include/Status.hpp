@@ -9,11 +9,14 @@
 
 namespace fms {
 
+/**
+ * @brief Represents the operational status of a fault or fault group.
+ */
 enum class Status: int
 {
-    UNINITIALIZED = -1,
-    PASS = 0,
-    FAIL = 1
+    UNINITIALIZED = -1,     // Entry has not been assigned a status.
+    PASS = 0,               // Passing status.
+    FAIL = 1                // Failing status.
 };
 
 } // namespace fms

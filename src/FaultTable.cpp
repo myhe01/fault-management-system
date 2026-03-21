@@ -8,6 +8,14 @@
 
 namespace fms {
 
+/**
+ * @brief Adds a pre-constructed fault entry to the table.
+ *
+ * Finds the first empty slot and assigns the entry to it.
+ *
+ * @param faultTableEntry The entry to insert.
+ * @returns true if the entry was inserted, false if the table is full.
+ */
 bool FaultTable::addFault(const FaultTableEntry& faultTableEntry)
 {
     // Find first empty spot in the fault table
@@ -27,11 +35,25 @@ bool FaultTable::addFault(const FaultTableEntry& faultTableEntry)
     return false;
 }
 
+/**
+ * @brief Constructs and adds a fault entry from a status and optional UID. If uid is empty, a random UID is generated.
+ *
+ * @param faultStatus Initial status for the new fault entry.
+ * @param uid OPTIONAL UID string. Defaults to empty (auto-generated).
+ * @returns true if the entry was inserted, false if the table is full.
+ */
 bool FaultTable::addFault(Status faultStatus, const std::string& uid)
 {
     return addFault(FaultTableEntry(faultStatus, uid));
 }
 
+/**
+ * @brief Retrieves the fault status of an entry by UID.
+ *
+ * @param uid The UID of the entry to look up.
+ * @param statusOut OUTPUT Populated with the entry's status if found. Unchanged if not found.
+ * @returns true if the entry was found, false otherwise.
+ */
 bool FaultTable::getFaultStatus(const std::string& uid, Status& statusOut) const
 {
     // Find the matching fault
@@ -49,6 +71,13 @@ bool FaultTable::getFaultStatus(const std::string& uid, Status& statusOut) const
     return false;
 }
 
+/**
+ * @brief Sets the fault status of an entry by UID.
+ *
+ * @param uid UID of the entry to update.
+ * @param status The new status to assign.
+ * @returns true if the entry was found and updated, false otherwise.
+ */
 bool FaultTable::setFaultStatus(const std::string& uid, const Status status)
 {
     if (uid.empty())
@@ -72,6 +101,13 @@ bool FaultTable::setFaultStatus(const std::string& uid, const Status status)
     return false;
 }
 
+/**
+ * @brief Assigns a fault entry to a numbered fault group.
+ *
+ * @param uid UID of the entry to update.
+ * @param faultGroup Numeric ID of the fault group to assign.
+ * @returns true if the group was newly assigned to the entry, false otherwise.
+ */
 bool FaultTable::assignFaultGroup(const std::string& uid, const unsigned int faultGroup)
 {
     // Find the matching fault
@@ -88,8 +124,16 @@ bool FaultTable::assignFaultGroup(const std::string& uid, const unsigned int fau
     return false;
 }
 
+/**
+ * @brief Returns the status of a fault group.
+ *
+ * @param faultGroup Numeric ID of the fault group to query.
+ * @returns Status::FAIL if any member entry is not passing, Status::UNINITIALIZED if no entries belong to the
+ * group, Status::PASS if all member entries are passing.
+ */
 Status FaultTable::getGroupStatus(const unsigned int faultGroup) const
 {
+    // Number of faults in the passed group
     unsigned int countInFaultGroup = 0;
 
     // Iterate through fault table to find faults apart of group
@@ -103,12 +147,12 @@ Status FaultTable::getGroupStatus(const unsigned int faultGroup) const
                 return Status::FAIL;
             }
 
+            // The current fault is in the passed fault group
             countInFaultGroup++;
         }
     }
 
-    // If we iterated through everything and didn't find any faults in that group,
-    // we'll call that group uninitialized
+    // If we iterated through everything and didn't find any faults in that group, we'll call that group uninitialized
     if (countInFaultGroup == 0)
     {
         return Status::UNINITIALIZED;
