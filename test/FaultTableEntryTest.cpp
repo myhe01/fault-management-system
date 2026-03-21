@@ -51,6 +51,30 @@ TEST(FaultTableEntryTest, Setters)
     EXPECT_STRNE(entry.getUid().c_str(), "");
 }
 
+TEST(FaultTableEntryTest, AssignFaultGroupInFaultGroup)
+{
+    FaultTableEntry entry;
+
+    EXPECT_TRUE(entry.faultGroups_.empty());
+
+    entry.assignFaultGroup(1);
+    EXPECT_TRUE(entry.inFaultGroup(1));
+    EXPECT_EQ(entry.faultGroups_.size(), 1);
+    EXPECT_STRNE(entry.getUid().c_str(), "");
+
+    entry.assignFaultGroup(2);
+    EXPECT_TRUE(entry.inFaultGroup(2));
+    EXPECT_EQ(entry.faultGroups_.size(), 2);
+
+    for (int i = 0; i < 5; i++)
+    {
+        entry.assignFaultGroup(42);
+    }
+    EXPECT_TRUE(entry.inFaultGroup(42));
+    EXPECT_EQ(entry.faultGroups_.count(42), 1);
+    EXPECT_EQ(entry.faultGroups_.size(), 3);
+}
+
 TEST(FaultTableEntryTest, FillUid)
 {
     FaultTableEntry entry;

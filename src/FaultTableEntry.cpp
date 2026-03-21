@@ -37,6 +37,7 @@ const std::string& FaultTableEntry::getUid() const
 // Returns true if insertion success, false if failure
 bool FaultTableEntry::assignFaultGroup(unsigned int faultGroup)
 {
+    fillUidIfEmpty_();
     return faultGroups_.insert(faultGroup).second;
 }
 
