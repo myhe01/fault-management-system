@@ -17,13 +17,15 @@ namespace fms {
 class Uid
 {
 public:
+    static constexpr std::size_t UID_LENGTH = 8;
+
     static std::string generate(const std::string& seed = "")
     {
         // Use the seed if passed, else just use RNG
         std::mt19937 gen(seed.empty() ? std::random_device{}() : std::hash<std::string>{}(seed));
 
         std::ostringstream oss;
-        oss << std::hex << std::setw(8) << std::setfill('0') << gen();
+        oss << std::hex << std::setw(UID_LENGTH) << std::setfill('0') << gen();
         return oss.str();
     }
 };

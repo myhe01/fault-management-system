@@ -15,6 +15,9 @@ TEST(UidTest, Seed)
     std::string uid0 = Uid::generate();
     std::string uid1 = Uid::generate();
 
+    EXPECT_EQ(uid0.length(), Uid::UID_LENGTH);
+    EXPECT_EQ(uid1.length(), Uid::UID_LENGTH);
+
     EXPECT_STRNE(uid0.c_str(), "");
     EXPECT_STRNE(uid0.c_str(), uid1.c_str());
 
