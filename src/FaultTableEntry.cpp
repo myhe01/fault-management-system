@@ -10,12 +10,11 @@ namespace fms {
 
 FaultTableEntry::FaultTableEntry(
     Status faultStatus,
-    const std::string& faultGroup,
     const std::string& uid
-) : faultStatus_(faultStatus), faultGroup_(faultGroup), uid_(uid)
+) : faultStatus_(faultStatus), uid_(uid)
 {
     // Fill the UID if this FaultTableEntry is going to be used
-    fillUid_();
+    fillUidIfEmpty_();
 }
 
 Status FaultTableEntry::getFaultStatus() const
@@ -26,20 +25,8 @@ Status FaultTableEntry::getFaultStatus() const
 void FaultTableEntry::setFaultStatus(Status faultStatus)
 {
     // Fill the UID if this FaultTableEntry is going to be used
-    fillUid_();
+    fillUidIfEmpty_();
     faultStatus_ = faultStatus;
-}
-
-const std::string& FaultTableEntry::getFaultGroup() const
-{
-    return faultGroup_;
-}
-
-void FaultTableEntry::setFaultGroup(const std::string& faultGroup)
-{
-    // Fill the UID if this FaultTableEntry is going to be used
-    fillUid_();
-    faultGroup_ = faultGroup;
 }
 
 const std::string& FaultTableEntry::getUid() const
@@ -47,8 +34,19 @@ const std::string& FaultTableEntry::getUid() const
     return uid_;
 }
 
+// Returns true if insertion success, false if failure
+bool FaultTableEntry::assignFaultGroup(unsigned int faultGroup)
+{
+    return faultGroups_.insert(faultGroup).second;
+}
+
+bool FaultTableEntry::inFaultGroup(unsigned int faultGroup) const
+{
+    return faultGroups_.contains(faultGroup);
+}
+
 // Fill UID if UID is unassigned
-void FaultTableEntry::fillUid_()
+void FaultTableEntry::fillUidIfEmpty_()
 {
     if (uid_.empty())
     {

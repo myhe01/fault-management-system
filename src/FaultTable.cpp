@@ -39,7 +39,6 @@ bool FaultTable::addFault(Status faultStatus, const std::string& faultGroup, con
             // Found an empty entry, make a new FaultTableEntry and assign it
             FaultTableEntry newEntry(
                 faultStatus,
-                faultGroup,
                 (uid.empty() ? Uid::generate() : uid)
             );
             entry = newEntry;
@@ -87,7 +86,7 @@ bool FaultTable::setFaultStatus(const std::string& uid, const Status status)
     return false;
 }
 
-bool FaultTable::setFaultGroup(const std::string& uid, const std::string& faultGroup)
+bool FaultTable::assignFaultGroup(const std::string& uid, const unsigned int faultGroup)
 {
     // Find the matching fault
     for (FaultTableEntry& entry : faultTable_)
@@ -95,7 +94,7 @@ bool FaultTable::setFaultGroup(const std::string& uid, const std::string& faultG
         if (entry.getUid() == uid)
         {
             // Matching fault found, set the faultGroup and return successfully
-            entry.setFaultGroup(faultGroup);
+            entry.assignFaultGroup(faultGroup);
             return true;
         }
     }
@@ -104,12 +103,12 @@ bool FaultTable::setFaultGroup(const std::string& uid, const std::string& faultG
     return false;
 }
 
-Status FaultTable::getGroupStatus(const std::string& faultGroup) const
+Status FaultTable::getGroupStatus(const unsigned int faultGroup) const
 {
     // Iterate through fault table to find faults apart of group
     for (const FaultTableEntry& entry : faultTable_)
     {
-        if (entry.getFaultGroup() == faultGroup && entry.getFaultStatus() != Status::PASS)
+        if (entry.inFaultGroup(faultGroup) && entry.getFaultStatus() != Status::PASS)
         {
             // Found a fault in the group that is failing
             return Status::FAIL;
