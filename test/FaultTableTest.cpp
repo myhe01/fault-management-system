@@ -17,7 +17,7 @@ TEST(FaultTableTest, Initialization)
 {
     FaultTable table;
     bool allFaultStatusUninit = true;
-    bool allFaultGroupEmpty = true;
+    bool allFaultGroupsEmpty = true;
     bool allUidEmpty = true;
 
     for (FaultTableEntry& entry: table.faultTable_)
@@ -26,9 +26,9 @@ TEST(FaultTableTest, Initialization)
         {
             allFaultStatusUninit = false;
         }
-        if (entry.faultGroup_ != "")
+        if (!entry.faultGroups_.empty())
         {
-            allFaultGroupEmpty = false;
+            allFaultGroupsEmpty = false;
         }
         if (entry.uid_ != "")
         {
@@ -37,7 +37,7 @@ TEST(FaultTableTest, Initialization)
     }
 
     EXPECT_TRUE(allFaultStatusUninit);
-    EXPECT_TRUE(allFaultGroupEmpty);
+    EXPECT_TRUE(allFaultGroupsEmpty);
     EXPECT_TRUE(allUidEmpty);
 }
 
@@ -60,7 +60,6 @@ TEST(FaultTableTest, GetFaultStatus)
     FaultTable table;
     FaultTableEntry entry(
         Status::PASS,
-        std::string("groupA"),
         std::string("deadbeef")
     );
     Status status = Status::UNINITIALIZED;
