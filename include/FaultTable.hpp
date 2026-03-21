@@ -21,7 +21,7 @@ public:
     ~FaultTable() = default;
 
     bool addFault(const FaultTableEntry& faultTableEntry);
-    bool addFault(Status faultStatus, const std::string& faultGroup = "", const std::string uid = "");
+    bool addFault(Status faultStatus, const std::string uid = "");
     bool getFaultStatus(const std::string& uid, Status& statusOut) const;
     bool setFaultStatus(const std::string& uid, const Status status);
     bool assignFaultGroup(const std::string& uid, const unsigned int faultGroup);

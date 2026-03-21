@@ -15,7 +15,7 @@ bool FaultTable::addFault(const FaultTableEntry& faultTableEntry)
     // Find first empty spot in the fault table
     for (FaultTableEntry& entry : faultTable_)
     {
-        if (entry.getFaultStatus() == Status::UNINITIALIZED)
+        if (entry.getFaultStatus() == Status::UNINITIALIZED && entry.getUid().empty())
         {
             // Found an empty entry, assign the FaultTableEntry
             entry = faultTableEntry;
@@ -29,27 +29,9 @@ bool FaultTable::addFault(const FaultTableEntry& faultTableEntry)
     return false;
 }
 
-bool FaultTable::addFault(Status faultStatus, const std::string& faultGroup, const std::string uid)
+bool FaultTable::addFault(Status faultStatus, const std::string uid)
 {
-    // Find first empty spot in the fault table
-    for (FaultTableEntry& entry : faultTable_)
-    {
-        if (entry.getFaultStatus() == Status::UNINITIALIZED)
-        {
-            // Found an empty entry, make a new FaultTableEntry and assign it
-            FaultTableEntry newEntry(
-                faultStatus,
-                (uid.empty() ? Uid::generate() : uid)
-            );
-            entry = newEntry;
-
-            // Successful entry
-            return true;
-        }
-    }
-
-    // No empty spots found
-    return false;
+    return addFault(FaultTableEntry(faultStatus, uid));
 }
 
 bool FaultTable::getFaultStatus(const std::string& uid, Status& statusOut) const
