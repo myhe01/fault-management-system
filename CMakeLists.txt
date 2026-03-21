@@ -29,7 +29,6 @@ target_compile_options(fms PRIVATE
     -Wpedantic
     -Wshadow
     -Wconversion
-    -Wno-unused-parameter
     -Werror
 )
 

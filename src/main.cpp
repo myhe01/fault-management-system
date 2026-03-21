@@ -17,7 +17,7 @@ void signalHandler(int)
     gThreadRun = false;
 }
 
-int main(int argc, char* argv[])
+int main()
 {
     std::signal(SIGINT, signalHandler);
     std::signal(SIGTERM, signalHandler);

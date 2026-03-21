@@ -64,12 +64,12 @@ TEST(FaultTableTest, AddFaultMax)
 {
     FaultTable table;
 
-    for (std::size_t i = 0; i < FaultTable::MAX_FAULT_TABLE_ENTRIES_; i++)
+    for (std::size_t i = 0; i < FaultTable::MAX_FAULT_TABLE_ENTRIES; i++)
     {
         EXPECT_TRUE(table.addFault(Status::PASS, std::to_string(i)));
     }
 
-    EXPECT_FALSE(table.addFault(Status::PASS, std::to_string(FaultTable::MAX_FAULT_TABLE_ENTRIES_)));
+    EXPECT_FALSE(table.addFault(Status::PASS, std::to_string(FaultTable::MAX_FAULT_TABLE_ENTRIES)));
 }
 
 TEST(FaultTableTest, GetFaultStatus)
@@ -141,6 +141,8 @@ TEST(FaultTableTest, GetGroupStatus)
         Status::FAIL,
         std::string("cafebabe")
     );
+
+    EXPECT_EQ(table.getGroupStatus(1), Status::UNINITIALIZED);
 
     EXPECT_TRUE(table.addFault(entry0));
     EXPECT_TRUE(table.addFault(entry1));

@@ -4,9 +4,7 @@
  * Creator: Brendan College
  */
 
-#include <iostream>
 #include "FaultTable.hpp"
-#include "Status.hpp"
 
 namespace fms {
 
@@ -15,7 +13,7 @@ bool FaultTable::addFault(const FaultTableEntry& faultTableEntry)
     // Find first empty spot in the fault table
     for (FaultTableEntry& entry : faultTable_)
     {
-        if (entry.getFaultStatus() == Status::UNINITIALIZED && entry.getUid().empty())
+        if (entry.getUid().empty())
         {
             // Found an empty entry, assign the FaultTableEntry
             entry = faultTableEntry;
@@ -29,7 +27,7 @@ bool FaultTable::addFault(const FaultTableEntry& faultTableEntry)
     return false;
 }
 
-bool FaultTable::addFault(Status faultStatus, const std::string uid)
+bool FaultTable::addFault(Status faultStatus, const std::string& uid)
 {
     return addFault(FaultTableEntry(faultStatus, uid));
 }
@@ -53,6 +51,12 @@ bool FaultTable::getFaultStatus(const std::string& uid, Status& statusOut) const
 
 bool FaultTable::setFaultStatus(const std::string& uid, const Status status)
 {
+    if (uid.empty())
+    {
+        // Unable to match empty UID
+        return false;
+    }
+
     // Find the matching fault
     for (FaultTableEntry& entry : faultTable_)
     {
@@ -75,9 +79,8 @@ bool FaultTable::assignFaultGroup(const std::string& uid, const unsigned int fau
     {
         if (entry.getUid() == uid)
         {
-            // Matching fault found, set the faultGroup and return successfully
-            entry.assignFaultGroup(faultGroup);
-            return true;
+            // Matching fault found, set the faultGroup and return the value of assignFaultGroup()
+            return entry.assignFaultGroup(faultGroup);
         }
     }
 
@@ -87,17 +90,31 @@ bool FaultTable::assignFaultGroup(const std::string& uid, const unsigned int fau
 
 Status FaultTable::getGroupStatus(const unsigned int faultGroup) const
 {
+    unsigned int countInFaultGroup = 0;
+
     // Iterate through fault table to find faults apart of group
     for (const FaultTableEntry& entry : faultTable_)
     {
-        if (entry.inFaultGroup(faultGroup) && entry.getFaultStatus() != Status::PASS)
+        if (entry.inFaultGroup(faultGroup))
         {
-            // Found a fault in the group that is failing
-            return Status::FAIL;
+            if (entry.getFaultStatus() != Status::PASS)
+            {
+                // Found a fault in the group that is failing
+                return Status::FAIL;
+            }
+
+            countInFaultGroup++;
         }
     }
 
-    // Iterated through group and all faults are passing
+    // If we iterated through everything and didn't find any faults in that group,
+    // we'll call that group uninitialized
+    if (countInFaultGroup == 0)
+    {
+        return Status::UNINITIALIZED;
+    }
+
+    // Iterated through group, faults exist in the group, and all faults are passing
     return Status::PASS;
 }
 

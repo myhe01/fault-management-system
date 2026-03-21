@@ -21,15 +21,16 @@ public:
     ~FaultTable() = default;
 
     bool addFault(const FaultTableEntry& faultTableEntry);
-    bool addFault(Status faultStatus, const std::string uid = "");
+    bool addFault(Status faultStatus, const std::string& uid = "");
     bool getFaultStatus(const std::string& uid, Status& statusOut) const;
     bool setFaultStatus(const std::string& uid, const Status status);
     bool assignFaultGroup(const std::string& uid, const unsigned int faultGroup);
     Status getGroupStatus(const unsigned int faultGroup) const;
 
+    static constexpr std::size_t MAX_FAULT_TABLE_ENTRIES = 64;
+
 private:
-    static constexpr std::size_t MAX_FAULT_TABLE_ENTRIES_ = 64;
-    std::array<FaultTableEntry, MAX_FAULT_TABLE_ENTRIES_> faultTable_;
+    std::array<FaultTableEntry, MAX_FAULT_TABLE_ENTRIES> faultTable_;
 };
 
 } // namespace fms

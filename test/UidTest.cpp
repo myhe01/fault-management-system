@@ -12,8 +12,8 @@ namespace fms {
 
 TEST(UidTest, Seed)
 {
-    std::string uid0 = Uid::generate();
-    std::string uid1 = Uid::generate();
+    std::string uid0 = Uid::generate("deadbeef");
+    std::string uid1 = Uid::generate("feedc0de");
 
     EXPECT_EQ(uid0.length(), Uid::UID_LENGTH);
     EXPECT_EQ(uid1.length(), Uid::UID_LENGTH);
