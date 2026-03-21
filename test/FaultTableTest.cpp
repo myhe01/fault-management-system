@@ -41,14 +41,36 @@ TEST(FaultTableTest, Initialization)
     EXPECT_TRUE(allUidEmpty);
 }
 
-TEST(FaultTableTest, AddRemoveFault)
+TEST(FaultTableTest, AddFault)
 {
     FaultTable table;
     FaultTableEntry entry(Status::PASS);
 
+    EXPECT_EQ(table.faultTable_[0].faultStatus_, Status::UNINITIALIZED);
+    EXPECT_TRUE(table.faultTable_[0].uid_.empty());
+
     EXPECT_TRUE(table.addFault(entry));
-    EXPECT_TRUE(table.removeFault(entry.getUid()));
-    EXPECT_FALSE(table.removeFault(entry.getUid()));
+
+    EXPECT_EQ(table.faultTable_[0].faultStatus_, Status::PASS);
+    EXPECT_FALSE(table.faultTable_[0].uid_.empty());
+}
+
+TEST(FaultTableTest, GetFaultStatus)
+{
+    FaultTable table;
+    FaultTableEntry entry(
+        Status::PASS,
+        std::string("groupA"),
+        std::string("deadbeef")
+    );
+    Status status = Status::UNINITIALIZED;
+
+    EXPECT_TRUE(table.addFault(entry));
+    EXPECT_TRUE(table.getFaultStatus(std::string("deadbeef"), status));
+    EXPECT_EQ(status, Status::PASS);
+
+    EXPECT_FALSE(table.getFaultStatus(std::string("feedc0de"), status));
+    EXPECT_EQ(status, Status::PASS);
 }
 
 } // namespace fms

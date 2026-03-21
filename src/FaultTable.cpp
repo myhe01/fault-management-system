@@ -53,23 +53,6 @@ bool FaultTable::addFault(Status faultStatus, const std::string& faultGroup, con
     return false;
 }
 
-bool FaultTable::removeFault(const std::string& uid)
-{
-    // Find the matching fault
-    for (FaultTableEntry& entry : faultTable_)
-    {
-        if (entry.getUid() == uid)
-        {
-            // Found the fault, assign an empty FaultTableEntry (successful removal)
-            entry = FaultTableEntry();
-            return true;
-        }
-    }
-
-    // No faults matched
-    return false;
-}
-
 bool FaultTable::getFaultStatus(const std::string& uid, Status& statusOut) const
 {
     // Find the matching fault
