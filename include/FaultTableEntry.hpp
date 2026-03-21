@@ -19,8 +19,8 @@ public:
     FaultTableEntry() = default;
     FaultTableEntry(
         Status faultStatus,
-        std::string faultGroup = "",
-        std::string uid = ""
+        const std::string& faultGroup = "",
+        const std::string& uid = ""
     );
 
     Status getFaultStatus() const;
@@ -30,6 +30,8 @@ public:
     const std::string& getUid() const;
 
 private:
+    void fillUid_();
+
     Status faultStatus_ = Status::UNINITIALIZED;
     std::string faultGroup_ = "";
     std::string uid_ = "";

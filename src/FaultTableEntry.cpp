@@ -10,15 +10,12 @@ namespace fms {
 
 FaultTableEntry::FaultTableEntry(
     Status faultStatus,
-    std::string faultGroup,
-    std::string uid
+    const std::string& faultGroup,
+    const std::string& uid
 ) : faultStatus_(faultStatus), faultGroup_(faultGroup), uid_(uid)
 {
-    if (uid_.empty())
-    {
-        // Generate a random UID if a name or UID wasn't assigned
-        uid_ = Uid::generate();
-    }
+    // Fill the UID if this FaultTableEntry is going to be used
+    fillUid_();
 }
 
 Status FaultTableEntry::getFaultStatus() const
@@ -28,6 +25,8 @@ Status FaultTableEntry::getFaultStatus() const
 
 void FaultTableEntry::setFaultStatus(Status faultStatus)
 {
+    // Fill the UID if this FaultTableEntry is going to be used
+    fillUid_();
     faultStatus_ = faultStatus;
 }
 
@@ -38,6 +37,8 @@ const std::string& FaultTableEntry::getFaultGroup() const
 
 void FaultTableEntry::setFaultGroup(const std::string& faultGroup)
 {
+    // Fill the UID if this FaultTableEntry is going to be used
+    fillUid_();
     faultGroup_ = faultGroup;
 }
 
@@ -46,5 +47,13 @@ const std::string& FaultTableEntry::getUid() const
     return uid_;
 }
 
+// Fill UID if UID is unassigned
+void FaultTableEntry::fillUid_()
+{
+    if (uid_.empty())
+    {
+        uid_ = Uid::generate();
+    }
+}
 
 } // namespace fms
