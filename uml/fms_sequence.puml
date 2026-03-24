@@ -1,0 +1,189 @@
+@startuml fms_sequence_instantiate_faulttable
+
+title Fault Management System - Instantiate Fault Table
+
+actor Caller
+participant "FaultTable" as FT
+participant "FaultTableEntry" as FTE
+
+== Instantiate FaultTable ==
+
+Caller -> FT : FaultTable()
+loop 64 times
+    FT -> FTE : FaultTableEntry()
+    FTE -> FTE : faultStatus_ = Status::UNINITIALIZED
+    FTE -> FTE : uid_ = ""
+    FTE -> FTE : faultGroups_ = {}
+end
+
+@enduml
+
+
+
+@startuml fms_sequence_instantiate_custom_faulttableentry
+
+title Fault Management System - Instantiate Custom FaultTableEntry
+
+actor Caller
+participant "FaultTable" as FT
+participant "FaultTableEntry" as FTE
+participant "Uid" as UID
+
+== Instantiate Custom FaultTableEntry ==
+
+Caller -> FTE : FaultTableEntry(faultStatus, uid)
+FTE -> FTE : fillUidIfEmpty_()
+alt uid is empty
+    FTE -> UID : generate()
+    UID --> FTE : "a3f0c821"
+end
+
+@enduml
+
+
+
+@startuml fms_sequence_add_fault
+
+title Fault Management System - Add Fault
+
+actor Caller
+participant "FaultTable" as FT
+participant "FaultTableEntry" as FTE
+participant "Uid" as UID
+
+== Add Fault ==
+
+Caller -> FT : addFault(faultStatus, uid)
+FT -> FTE : FaultTableEntry(faultStatus, uid)
+FTE -> FTE : fillUidIfEmpty_()
+alt uid is empty
+    FTE -> UID : generate()
+    UID --> FTE : "a3f0c821"
+end
+FTE --> FT : entry
+loop for each entry in faultTable_
+    FT -> FTE : getUid()
+    FTE --> FT : uid_
+    alt uid_ is empty
+        FT -> FT : faultTable_[i] = faultTableEntry
+        FT --> Caller : true
+    end
+end
+FT --> Caller : false
+note right: Table full.
+
+@enduml
+
+
+
+@startuml fms_sequence_assign_fault_group
+
+title Fault Management System - Assign Fault Group
+
+actor Caller
+participant "FaultTable" as FT
+participant "FaultTableEntry" as FTE
+
+== Assign Fault Group ==
+
+Caller -> FT : assignFaultGroup(uid, faultGroup)
+FT -> FT : find entry where\ngetUid() == uid
+alt no entry matched
+    FT --> Caller : false
+else entry matched
+    FT -> FTE : assignFaultGroup(faultGroup)
+    FTE -> FTE : faultGroups_.insert(faultGroup)
+    alt faultGroup already in faultGroups_
+        FTE --> FT : false
+        FT --> Caller : false
+    else faultGroup successfully added
+        FTE --> FT : true
+        FT --> Caller : true
+    end
+end
+
+@enduml
+
+
+
+@startuml fms_sequence_set_fault_status
+
+title Fault Management System - Set Fault Status
+
+actor Caller
+participant "FaultTable" as FT
+participant "FaultTableEntry" as FTE
+
+== Set Fault Status ==
+
+Caller -> FT : setFaultStatus(uid, status)
+alt uid is empty
+    FT --> Caller : false
+end
+FT -> FT : find entry where\ngetUid() == uid
+alt entry not found
+    FT --> Caller : false
+else entry matched
+    FT -> FTE : setFaultStatus(status)
+    FTE -> FTE : faultStatus_ = status
+    FT --> Caller : true
+end
+
+@enduml
+
+
+
+@startuml fms_sequence_get_fault_status
+
+title Fault Management System - Get Fault Status
+
+actor Caller
+participant "FaultTable" as FT
+participant "FaultTableEntry" as FTE
+
+== Get Fault Status ==
+
+Caller -> FT : getFaultStatus(uid, statusOut)
+FT -> FT : find entry where\ngetUid() == uid
+alt entry not found
+    FT --> Caller : false\n[statusOut unchanged]
+else entry matched
+FT -> FTE : getFaultStatus()
+FTE --> FT : faultStatus_
+FT --> Caller : true\n[statusOut = faultStatus_]
+end
+
+@enduml
+
+
+
+@startuml fms_sequence_get_group_status
+
+title Fault Management System - Get Group Status
+
+actor Caller
+participant "FaultTable" as FT
+participant "FaultTableEntry" as FTE
+
+== Get Group Status ==
+
+Caller -> FT : getGroupStatus(faultGroup)
+loop for each entry in faultTable_
+    FT -> FTE : inFaultGroup(faultGroup)
+    FTE --> FT : true / false
+    alt entry is in group
+        FT -> FTE : getFaultStatus()
+        FTE --> FT : faultStatus_
+        alt faultStatus_ != PASS
+            FT --> Caller : FAIL
+        end
+        FT -> FT : countInFaultGroup++
+    end
+end
+alt no faults in faultGroup
+    FT --> Caller : UNINITIALIZED
+else faults exist in faultGroup
+    FT --> Caller : PASS
+end
+
+@enduml

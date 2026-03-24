@@ -1,0 +1,73 @@
+@startuml
+
+
+
+
+
+/' Objects '/
+
+namespace fms {
+	class FaultTable {
+		+FaultTable()
+		+getGroupStatus(const unsigned int faultGroup) : Status {query}
+		+addFault(const FaultTableEntry& faultTableEntry) : bool
+		+addFault(Status faultStatus, const std::string& uid) : bool
+		+assignFaultGroup(const std::string& uid, const unsigned int faultGroup) : bool
+		+getFaultStatus(const std::string& uid, Status& statusOut) : bool {query}
+		+setFaultStatus(const std::string& uid, const Status status) : bool
+		+{static} MAX_FAULT_TABLE_ENTRIES : static constexpr std::size_t
+		-faultTable_ : std::array<FaultTableEntry, MAX_FAULT_TABLE_ENTRIES>
+	}
+
+	class FaultTableEntry {
+		+FaultTableEntry()
+		+FaultTableEntry(Status faultStatus, const std::string& uid)
+		-faultStatus_ : Status
+		+getFaultStatus() : Status {query}
+		+assignFaultGroup(unsigned int faultGroup) : bool
+		+inFaultGroup(unsigned int faultGroup) : bool {query}
+		-uid_ : std::string
+		+getUid() : std::string& {query}
+		-faultGroups_ : std::unordered_set<unsigned int>
+		-fillUidIfEmpty_() : void
+		+setFaultStatus(Status faultStatus) : void
+	}
+
+	class Uid {
+		+{static} UID_LENGTH : static constexpr std::size_t
+		+{static} generate(const std::string& seed) : std::string
+	}
+
+	enum Status {
+		FAIL
+		PASS
+		UNINITIALIZED
+	}
+}
+
+
+
+
+
+/' Inheritance relationships '/
+
+
+
+
+/' Aggregation relationships '/
+
+fms.FaultTable *-- fms.FaultTableEntry
+
+
+fms.FaultTableEntry *-- fms.Status
+
+
+
+
+
+
+/' Nested objects '/
+
+
+
+@enduml
