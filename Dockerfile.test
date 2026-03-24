@@ -9,13 +9,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ninja-build \
         ca-certificates \
         git \
+        gcovr \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
 
 # Pre-fetch GoogleTest before copying sources so this layer gets cached
 COPY test/CMakeLists.txt CMakeLists.txt
-RUN cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release --no-warn-unused-cli \
+RUN cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli \
     && cmake --build build --target googletest_fetch || true
 
 # Copy project files
@@ -24,8 +25,17 @@ COPY src/ src/
 COPY test/ test/
 
 RUN cmake -B build -G Ninja \
-        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_BUILD_TYPE=Debug \
     && cmake --build build --parallel
+
+# Run tests and generate coverage report
+RUN ./build/fms_tests \
+    && gcovr \
+        --root /src \
+        --filter 'src/' \
+        --filter 'include/' \
+        --sonarqube \
+        --output /src/coverage.xml
 
 # Run stage
 FROM ubuntu:24.04 AS run
@@ -37,6 +47,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /src/build/fms_tests /app/fms_tests
+COPY --from=build /src/coverage.xml /app/coverage.xml
 
 WORKDIR /app
 

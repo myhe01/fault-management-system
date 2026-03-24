@@ -56,6 +56,12 @@ bool FaultTable::addFault(Status faultStatus, const std::string& uid)
  */
 bool FaultTable::getFaultStatus(const std::string& uid, Status& statusOut) const
 {
+    if (uid.empty())
+    {
+        // Unable to match empty UID
+        return false;
+    }
+
     // Find the matching fault
     for (const FaultTableEntry& entry : faultTable_)
     {
@@ -110,6 +116,12 @@ bool FaultTable::setFaultStatus(const std::string& uid, const Status status)
  */
 bool FaultTable::assignFaultGroup(const std::string& uid, const unsigned int faultGroup)
 {
+    if (uid.empty())
+    {
+        // Unable to match empty UID
+        return false;
+    }
+
     // Find the matching fault
     for (FaultTableEntry& entry : faultTable_)
     {

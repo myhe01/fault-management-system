@@ -87,7 +87,29 @@ TEST(FaultTableTest, GetFaultStatus)
 
     EXPECT_FALSE(table.getFaultStatus(std::string("feedc0de"), status));
     EXPECT_EQ(status, Status::PASS);
+
+    EXPECT_FALSE(table.getFaultStatus(std::string(""), status));
 }
+
+TEST(FaultTableTest, SetFaultStatus)
+{
+    FaultTable table;
+    FaultTableEntry entry(
+        Status::PASS,
+        std::string("deadbeef")
+    );
+
+    EXPECT_TRUE(table.addFault(entry));
+    EXPECT_TRUE(table.setFaultStatus(std::string("deadbeef"), Status::UNINITIALIZED));
+    EXPECT_EQ(table.faultTable_[0].faultStatus_, Status::UNINITIALIZED);
+
+    EXPECT_TRUE(table.setFaultStatus(std::string("deadbeef"), Status::FAIL));
+    EXPECT_EQ(table.faultTable_[0].faultStatus_, Status::FAIL);
+
+    EXPECT_FALSE(table.setFaultStatus(std::string(""), Status::FAIL));
+    EXPECT_FALSE(table.setFaultStatus(std::string("feedc0de"), Status::FAIL));
+}
+
 
 TEST(FaultTableTest, AssignFaultGroup)
 {
@@ -124,6 +146,9 @@ TEST(FaultTableTest, AssignFaultGroup)
     EXPECT_FALSE(table.faultTable_[1].inFaultGroup(1));
     EXPECT_TRUE(table.faultTable_[1].inFaultGroup(2));
     EXPECT_FALSE(table.faultTable_[1].inFaultGroup(67));
+
+    EXPECT_FALSE(table.assignFaultGroup(std::string(""), 2));
+    EXPECT_FALSE(table.assignFaultGroup(std::string("cafebabe"), 2));
 }
 
 TEST(FaultTableTest, GetGroupStatus)

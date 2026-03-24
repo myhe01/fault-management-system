@@ -41,7 +41,10 @@ target_compile_options(fms_tests PRIVATE
     -Wshadow
     -Wconversion
     -Werror
+    --coverage
 )
+
+target_link_options(fms_tests PRIVATE --coverage)
 
 target_link_libraries(fms_tests PRIVATE
     GTest::gtest_main
